@@ -33,7 +33,10 @@
       <div class="prompt">
         <p id="prompt"></p>
         <form id="pick-form" hidden>
-          <input id="pick-input" list="countries" placeholder="Type a country…" autocomplete="off">
+          <div class="picker">
+            <input id="pick-input" placeholder="Type a country…" autocomplete="off">
+            <ul id="suggest" hidden></ul>
+          </div>
           <button type="submit">Pick</button>
         </form>
         <button id="unpick"  type="button" hidden>Take it back</button>
@@ -44,8 +47,6 @@
       <ul id="log"></ul>
     </section>
   </main>
-
-  <datalist id="countries"></datalist>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="js/game.js"></script>

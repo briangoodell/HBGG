@@ -66,7 +66,20 @@ button:not(:disabled):hover { border-color: var(--fern); }
 .prompt { min-height: 96px; }
 .prompt p { font-family: var(--serif); font-size: 1.3rem; margin: 8px 0; }
 #pick-form { display: flex; gap: 8px; }
-#pick-input { flex: 1; min-width: 0; }
+.picker { position: relative; flex: 1; min-width: 0; }
+#pick-input { width: 100%; }
+#suggest {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
+  list-style: none; margin: 4px 0 0; padding: 4px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+}
+#suggest li {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 4px; cursor: pointer;
+}
+#suggest li.active, #suggest li:hover { background: #E1E6D3; }
+#suggest img { width: 24px; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule); }
 
 /* ---- Grid ------------------------------------------------- */
 

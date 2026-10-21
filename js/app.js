@@ -169,13 +169,47 @@ function lobby(html) {
 
 /* ---- Controls --------------------------------------------- */
 
+/* Country picker: type to filter, arrows + Enter or click to pick. */
+let matches = [];   // countries shown in the dropdown
+let active  = 0;    // highlighted one
+
+function renderSuggest() {
+  const q = $('pick-input').value.trim().toLowerCase();
+  const starts = (c) => c.name.toLowerCase().startsWith(q);
+  matches = !q ? [] : countries
+    .filter((c) => c.name.toLowerCase().includes(q) && !state.cells.includes(c.name))
+    .sort((a, b) => starts(b) - starts(a))   // prefix matches first, else alphabetical
+    .slice(0, 8);
+  active = Math.min(active, Math.max(matches.length - 1, 0));
+  $('suggest').hidden = !matches.length;
+  $('suggest').innerHTML = matches.map((c, i) =>
+    `<li data-i="${i}" class="${i === active ? 'active' : ''}"><img src="${flagUrl(c.name)}" alt="">${c.name}</li>`
+  ).join('');
+}
+
+function pickCountry(c) {
+  $('pick-input').value = '';
+  renderSuggest();
+  dispatch({ type: 'pick', country: c.name });
+}
+
+$('pick-input').oninput = () => { active = 0; renderSuggest(); };
+$('pick-input').onfocus = renderSuggest;
+$('pick-input').onblur  = () => ($('suggest').hidden = true);
+$('pick-input').onkeydown = (e) => {
+  if (!matches.length || !['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+  e.preventDefault();
+  active = (active + (e.key === 'ArrowDown' ? 1 : -1) + matches.length) % matches.length;
+  renderSuggest();
+};
+$('suggest').onmousedown = (e) => e.preventDefault();   // keep focus in the input
+$('suggest').onclick = (e) => {
+  const li = e.target.closest('li');
+  if (li) pickCountry(matches[li.dataset.i]);
+};
 $('pick-form').onsubmit = (e) => {
   e.preventDefault();
-  const name = $('pick-input').value.trim();
-  const c = countries.find((c) => c.name.toLowerCase() === name.toLowerCase());
-  if (!c || state.cells.includes(c.name)) return $('pick-input').select();
-  $('pick-input').value = '';
-  dispatch({ type: 'pick', country: c.name });
+  if (matches.length) pickCountry(matches[active]);
 };
 $('unpick').onclick       = () => dispatch({ type: 'unpick' });
 $('discard').onclick      = () => dispatch({ type: 'discard' });
@@ -190,7 +224,6 @@ async function start() {
     getJSON('data/countries.json'),
   ]);
   countries = countryList;
-  $('countries').innerHTML = countries.map((c) => `<option value="${c.name}">`).join('');
   $('board-select').innerHTML = boardList.map((b) => `<option value="${b.id}">${b.title}</option>`).join('');
 
   const handlers = {
