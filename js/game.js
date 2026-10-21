@@ -7,14 +7,42 @@
    the resulting state to the guest.
 
    Roles: the BRAIN picks a country, the HAND places it.
+
+   Cells are always stored in the board's own order. Each player
+   just *sees* the rows and columns in a different order (views),
+   so neither can follow the other's layout.
    ============================================================ */
 
-const MAX_GUESSES = 9;
+const MAX_GUESSES = 10;
+
+/* ---- Views ------------------------------------------------ */
+
+function shuffle3() {
+  const p = [0, 1, 2];
+  for (let i = 2; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [p[i], p[j]] = [p[j], p[i]];
+  }
+  return p;
+}
+
+// Rotating by 1 or 2 moves every row/column to a different position.
+const rotate = (p, k) => p.map((_, i) => p[(i + k) % 3]);
+const rotateBy1or2 = (p) => rotate(p, 1 + Math.floor(Math.random() * 2));
+
+function makeViews() {
+  const rows = shuffle3(), cols = shuffle3();
+  return {
+    host:  { rows, cols },
+    guest: { rows: rotateBy1or2(rows), cols: rotateBy1or2(cols) },
+  };
+}
 
 function newGame(boardId, brain = 'host') {
   return {
     boardId,
     brain,              // 'host' | 'guest'; the other player is the hand
+    views:   makeViews(),           // per player: display order of board rows/cols
     pending: null,      // country the brain picked, waiting to be placed
     cells:   Array(9).fill(null),   // country name per cell, row-major
     guesses: [],        // { country, cell, correct }; cell = null means discarded

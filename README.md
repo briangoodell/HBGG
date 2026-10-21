@@ -1,7 +1,7 @@
 # Hand & Brain GeoGrid
 
 A two-player, hand-and-brain version of [GeoGrid](https://www.geogridgame.com/).
-The **Brain** picks a country, the **Hand** places it on the 3×3 grid. You get 9 guesses.
+The **Brain** picks a country, the **Hand** places it on the 3×3 grid. You get 10 guesses. Each player sees the rows and columns in a different order, so you can't just say "top left".
 
 ## Run it
 

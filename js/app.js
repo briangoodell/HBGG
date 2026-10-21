@@ -73,11 +73,12 @@ function cellHTML(i) {
 }
 
 function renderGrid() {
+  const { rows, cols } = state.views[ME];
   const g = $('grid');
-  g.innerHTML = '<div></div>' + board.cols.map((c) => `<div class="label">${c}</div>`).join('');
-  board.rows.forEach((row, r) => {
-    g.insertAdjacentHTML('beforeend', `<div class="label">${row}</div>`);
-    for (let c = 0; c < 3; c++) {
+  g.innerHTML = '<div></div>' + cols.map((c) => `<div class="label">${board.cols[c]}</div>`).join('');
+  rows.forEach((r) => {
+    g.insertAdjacentHTML('beforeend', `<div class="label">${board.rows[r]}</div>`);
+    for (const c of cols) {
       const i = 3 * r + c;
       const btn = document.createElement('button');
       btn.className = 'cell' + (state.cells[i] ? ' filled' : '');
