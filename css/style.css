@@ -1,0 +1,96 @@
+/* ============================================================
+   HAND & BRAIN GEOGRID
+   Warm paper, deep ink, forest fern (borrowed from my site).
+   ============================================================ */
+
+:root {
+  --paper:    #E7E3D4;
+  --surface:  #F0ECDE;
+  --rule:     #C7BCAB;
+  --ink:      #1F1812;
+  --ink-mute: #7A6B53;
+  --fern:     #4A6741;
+  --fern-soft:#7D9E70;
+  --bad:      #9C4A2E;
+
+  --serif: 'Newsreader', Georgia, serif;
+  --sans:  'IBM Plex Sans', system-ui, sans-serif;
+  --mono:  'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  padding: 0 16px 48px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+header, main { max-width: 640px; margin: 0 auto; }
+header { padding: 32px 0 8px; }
+h1 { font-family: var(--serif); font-weight: 500; font-size: 2.2rem; margin: 0 0 4px; }
+h1 em { color: var(--fern); }
+.muted { color: var(--ink-mute); font-size: 0.85rem; }
+
+button, select, input {
+  font: inherit;
+  padding: 8px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+}
+button:not(:disabled) { cursor: pointer; }
+button:not(:disabled):hover { border-color: var(--fern); }
+
+/* ---- Lobby ------------------------------------------------ */
+
+#lobby { padding: 32px 0; text-align: center; line-height: 1.8; }
+#share { width: 100%; margin-top: 8px; font-family: var(--mono); font-size: 0.85rem; }
+
+/* ---- Toolbar + prompt ------------------------------------- */
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0; }
+#board-select { flex: 1 1 200px; }
+.tag { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-mute); }
+
+.prompt { min-height: 96px; }
+.prompt p { font-family: var(--serif); font-size: 1.3rem; margin: 8px 0; }
+#pick-form { display: flex; gap: 8px; }
+#pick-input { flex: 1; min-width: 0; }
+
+/* ---- Grid ------------------------------------------------- */
+
+#grid {
+  display: grid;
+  grid-template-columns: minmax(70px, 1fr) repeat(3, minmax(0, 1.3fr));
+  gap: 6px;
+}
+.label {
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px; text-align: center;
+  font-size: 0.78rem; font-weight: 500; line-height: 1.25;
+}
+.cell {
+  aspect-ratio: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 4px;
+  font-size: 0.78rem;
+  border: 2px solid var(--rule);
+}
+.cell:disabled { color: var(--ink); }
+.cell:not(:disabled) { border-color: var(--fern-soft); background: #fff; }
+.cell.filled { border-color: var(--fern); background: #E1E6D3; }
+.pct { font-family: var(--mono); font-size: 0.75rem; color: var(--fern); }
+.cell img { width: 48px; max-width: 80%; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule); }
+
+/* ---- Log -------------------------------------------------- */
+
+#log { list-style: none; padding: 0; margin: 24px 0 0; font-size: 0.9rem; }
+#log li { padding: 6px 0; border-bottom: 1px solid var(--rule); }
+#log li::before { font-family: var(--mono); margin-right: 8px; }
+#log li.ok::before  { content: '✓'; color: var(--fern); }
+#log li.bad::before { content: '✗'; color: var(--bad); }

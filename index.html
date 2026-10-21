@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hand &amp; Brain GeoGrid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Hand <em>&amp;</em> Brain GeoGrid</h1>
+    <p class="muted">The Brain picks a country. The Hand places it. No telling each other where.</p>
+  </header>
+
+  <main>
+    <section id="lobby">
+      <p id="lobby-msg">Loading…</p>
+    </section>
+
+    <section id="game" hidden>
+      <div class="toolbar">
+        <select id="board-select" aria-label="Board"></select>
+        <span class="tag">You: <b id="role"></b></span>
+        <button id="swap" type="button">Swap roles</button>
+        <span id="left" class="tag"></span>
+      </div>
+
+      <div class="prompt">
+        <p id="prompt"></p>
+        <form id="pick-form" hidden>
+          <input id="pick-input" list="countries" placeholder="Type a country…" autocomplete="off">
+          <button type="submit">Pick</button>
+        </form>
+        <button id="unpick"  type="button" hidden>Take it back</button>
+        <button id="discard" type="button" hidden>Doesn't fit anywhere (uses a guess)</button>
+      </div>
+
+      <div id="grid"></div>
+      <ul id="log"></ul>
+    </section>
+  </main>
+
+  <datalist id="countries"></datalist>
+
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/net.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
