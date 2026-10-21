@@ -183,7 +183,7 @@ function renderSuggest() {
   active = Math.min(active, Math.max(matches.length - 1, 0));
   $('suggest').hidden = !matches.length;
   $('suggest').innerHTML = matches.map((c, i) =>
-    `<li data-i="${i}" class="${i === active ? 'active' : ''}"><img src="${flagUrl(c.name)}" alt="">${c.name}</li>`
+    `<li data-i="${i}" class="${i === active ? 'active' : ''}">${c.name}</li>`
   ).join('');
 }
 
