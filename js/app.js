@@ -141,6 +141,34 @@ function renderLog() {
   }).join('');
 }
 
+function renderSummary() {
+  const show = isOver(state) && board.rarity;
+  $('summary').hidden = !show;
+  if (!show) return;
+
+  const rows = review(state, board);
+  const fmt  = (p) => (p >= MISS ? 'miss' : `${p}%`);
+  const lost = (d) => `<span class="${d > 0 ? 'lost' : 'pct'}">${d > 0 ? `−${d.toFixed(1)}` : '✓'}</span>`;
+  const total = (f) => rows.reduce((t, r) => t + f(r), 0).toFixed(1);
+
+  $('summary').innerHTML = `
+    <h2>How you did</h2>
+    <p class="muted">Rarity points: lower is better, a miss costs 100. Optimal = best unused country for any open cell at that moment.</p>
+    <table>
+      <tr><th>Nominated</th><th>Brain <span class="muted">its best · optimal</span></th><th>Hand <span class="muted">placed · its best</span></th></tr>
+      ${rows.map((r) => `<tr>
+        <td>${r.country}</td>
+        <td>${fmt(r.nominated)} · ${fmt(r.optimal.pct)} <span class="muted">${r.optimal.country ?? ''}</span> ${lost(r.nominated - r.optimal.pct)}</td>
+        <td>${fmt(r.placed)} · ${fmt(r.nominated)} ${lost(r.placed - r.nominated)}</td>
+      </tr>`).join('')}
+      <tr class="total">
+        <td>Points lost</td>
+        <td>${total((r) => r.nominated - r.optimal.pct)}</td>
+        <td>${total((r) => r.placed - r.nominated)}</td>
+      </tr>
+    </table>`;
+}
+
 function render() {
   notice('');
   $('lobby').hidden = true;
@@ -152,6 +180,7 @@ function render() {
   renderGrid();
   renderPrompt();
   renderLog();
+  renderSummary();
 }
 
 // A message about the connection: a banner over the game, or the lobby before it starts.

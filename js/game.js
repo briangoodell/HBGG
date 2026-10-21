@@ -101,3 +101,35 @@ function applyAction(s, action, from, board) {
       return s;
   }
 }
+
+/* ---- End-of-game review ----------------------------------- */
+// Replays the guesses and scores each against the best move available
+// at that moment, in GeoGrid rarity points: lower is better, and a miss
+// costs 100 (the same as an empty cell in GeoGrid's score).
+//   optimal   best (country, cell) the brain could have nominated
+//   nominated best the nominated country could score in any open cell
+//   placed    what the hand actually scored with it
+
+const MISS = 100;
+
+function review(s, board) {
+  const cells = Array(9).fill(null);
+  const pct = (cell, name) => board.rarity[cell][name] ?? 0;
+
+  return s.guesses.map((g) => {
+    const open = [...cells.keys()].filter((i) => !cells[i]);
+
+    let optimal = { country: null, pct: MISS };
+    for (const i of open) {
+      for (const name of board.answers[i]) {
+        if (!cells.includes(name) && pct(i, name) < optimal.pct) optimal = { country: name, pct: pct(i, name) };
+      }
+    }
+    const fits = open.filter((i) => board.answers[i].includes(g.country));
+    const nominated = Math.min(MISS, ...fits.map((i) => pct(i, g.country)));
+    const placed = g.correct ? pct(g.cell, g.country) : MISS;
+
+    if (g.correct) cells[g.cell] = g.country;
+    return { country: g.country, optimal, nominated, placed };
+  });
+}
