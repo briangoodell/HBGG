@@ -1,5 +1,5 @@
 /* ============================================================
-   HAND & BRAIN GEOGRID
+   HAND-BRAIN GEOGRID
    Warm paper, deep ink, forest fern (borrowed from my site).
    ============================================================ */
 
@@ -50,6 +50,12 @@ button:not(:disabled):hover { border-color: var(--fern); }
 
 #lobby { padding: 32px 0; text-align: center; line-height: 1.8; }
 #share { width: 100%; margin-top: 8px; font-family: var(--mono); font-size: 0.85rem; }
+
+#status {
+  margin: 16px 0 0; padding: 8px 12px;
+  border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--surface); color: var(--ink-mute); font-size: 0.9rem;
+}
 
 /* ---- Toolbar + prompt ------------------------------------- */
 

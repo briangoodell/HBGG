@@ -50,8 +50,22 @@ function dispatch(action) {
 async function hostApply(action, from) {
   if (action.type === 'new' && from === 'host') await loadBoard(action.boardId);
   state = applyAction(state, action, from, board);
+  saveHost();
   send({ state });
   render();
+}
+
+/* The host keeps its room + game in sessionStorage, so reloading the
+   tab brings back the same room (the guest reconnects on its own).
+   A new tab gets a new room. */
+const HOST_KEY = 'hbgg-host';
+let roomCode = null;
+
+function saveHost() {
+  try { sessionStorage.setItem(HOST_KEY, JSON.stringify({ roomCode, state })); } catch (_) {}
+}
+function loadHost() {
+  try { return JSON.parse(sessionStorage.getItem(HOST_KEY)); } catch (_) { return null; }
 }
 
 async function onMessage(msg) {
@@ -128,6 +142,7 @@ function renderLog() {
 }
 
 function render() {
+  notice('');
   $('lobby').hidden = true;
   $('game').hidden  = false;
   $('board-select').value = state.boardId;
@@ -137,6 +152,13 @@ function render() {
   renderGrid();
   renderPrompt();
   renderLog();
+}
+
+// A message about the connection: a banner over the game, or the lobby before it starts.
+function notice(text) {
+  if ($('game').hidden) return lobby(text);
+  $('status').textContent = text;
+  $('status').hidden = !text;
 }
 
 function lobby(html) {
@@ -173,23 +195,26 @@ async function start() {
 
   const handlers = {
     onMessage,
-    onError: (type) => lobby(type === 'peer-unavailable'
-      ? 'Room not found. Ask your friend for a fresh link.'
-      : `Connection error: ${type}`),
-    onClose: () => lobby(ME === 'host'
-      ? 'Your partner disconnected. They can rejoin with the same link.'
-      : 'Lost the host. Reload to reconnect.'),
+    onError:   (text) => lobby(text),
+    onWaiting: () => notice('Waiting for the host to come back…'),
+    onClose:   () => notice(ME === 'host'
+      ? 'Your partner disconnected. Waiting for them to reconnect…'
+      : 'Connection lost. Reconnecting…'),
     onConnect: () => {
       if (ME === 'host') { send({ state }); render(); }
-      else lobby('Connected. Loading game…');
+      else notice('Connected. Loading game…');
     },
   };
 
   if (ME === 'host') {
-    await loadBoard(boardList[0].id);
-    state = newGame(board.id);
+    const saved = loadHost();
+    roomCode = saved?.roomCode ?? randomRoomCode();
+    state    = saved?.state ?? null;
+    await loadBoard(state?.boardId ?? boardList[0].id);
+    state ??= newGame(board.id);
+    saveHost();
     lobby('Opening a room…');
-    hostRoom({
+    hostRoom(roomCode, {
       ...handlers,
       onReady: (code) => {
         const link = `${location.origin}${location.pathname}?room=${code}`;

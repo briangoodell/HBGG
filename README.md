@@ -1,4 +1,4 @@
-# Hand & Brain GeoGrid
+# Hand-Brain GeoGrid
 
 A two-player, hand-and-brain version of [GeoGrid](https://www.geogridgame.com/).
 The **Brain** picks a country, the **Hand** places it on the 3×3 grid. You get 10 guesses. Each player sees the rows and columns in a different order, so you can't just say "top left".
@@ -45,6 +45,7 @@ attributes, and a grid is 3 row + 3 column predicates where every cell has enoug
 
 ## Known limits
 
-- If the host reloads, the game resets and the old link stops working.
+- Dropped connections recover automatically: the guest keeps retrying, and a host
+  reload restores the same room and game (kept in `sessionStorage`, so a *new tab* is a new room).
 - Some strict networks (corporate or symmetric NAT) block a direct WebRTC connection.
   The fix is to add a TURN server to `new Peer(..., { config })` in `net.js`.
