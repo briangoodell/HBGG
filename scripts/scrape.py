@@ -64,7 +64,6 @@ def main(days=7):
     (DATA / 'countries.json').write_text(json.dumps(countries, ensure_ascii=False, indent=1), encoding='utf-8')
     print(f'countries: {len(countries)}')
 
-    index = []
     for back in range(days):
         day = date.today() - timedelta(days=back)
         board_id = (day - EPOCH).days + 1
@@ -77,9 +76,11 @@ def main(days=7):
             continue
         path = DATA / 'boards' / f'{board_id}.json'
         path.write_text(json.dumps(board, ensure_ascii=False), encoding='utf-8')
-        index.append({'id': board['id'], 'title': board['title']})
         print(f'board {board_id}: ok')
 
+    # List every board we have (newest first), not just the ones fetched this run.
+    paths = sorted((DATA / 'boards').glob('[0-9]*.json'), key=lambda p: -int(p.stem))
+    index = [{'id': b['id'], 'title': b['title']} for b in (json.loads(p.read_text(encoding='utf-8')) for p in paths)]
     (DATA / 'boards' / 'index.json').write_text(json.dumps(index, ensure_ascii=False, indent=1), encoding='utf-8')
 
 

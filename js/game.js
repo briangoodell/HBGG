@@ -106,7 +106,8 @@ function applyAction(s, action, from, board) {
 // Replays the guesses and scores each against the best move available
 // at that moment, in GeoGrid rarity points: lower is better, and a miss
 // costs 100 (the same as an empty cell in GeoGrid's score).
-//   optimal   best (country, cell) the brain could have nominated
+//   optimal   best score the brain could have nominated, and every
+//             country that ties for it
 //   nominated best the nominated country could score in any open cell
 //   placed    what the hand actually scored with it
 
@@ -119,12 +120,14 @@ function review(s, board) {
   return s.guesses.map((g) => {
     const open = [...cells.keys()].filter((i) => !cells[i]);
 
-    let optimal = { country: null, pct: MISS };
-    for (const i of open) {
-      for (const name of board.answers[i]) {
-        if (!cells.includes(name) && pct(i, name) < optimal.pct) optimal = { country: name, pct: pct(i, name) };
-      }
-    }
+    const options = open.flatMap((i) => board.answers[i]
+      .filter((name) => !cells.includes(name))
+      .map((name) => ({ name, pct: pct(i, name) })));
+    const best = Math.min(MISS, ...options.map((o) => o.pct));
+    const optimal = {
+      pct: best,
+      countries: [...new Set(options.filter((o) => o.pct === best).map((o) => o.name))],
+    };
     const fits = open.filter((i) => board.answers[i].includes(g.country));
     const nominated = Math.min(MISS, ...fits.map((i) => pct(i, g.country)));
     const placed = g.correct ? pct(g.cell, g.country) : MISS;

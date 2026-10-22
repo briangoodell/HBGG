@@ -150,6 +150,8 @@ function renderSummary() {
   const fmt  = (p) => (p >= MISS ? 'miss' : `${p}%`);
   const lost = (d) => `<span class="${d > 0 ? 'lost' : 'pct'}">${d > 0 ? `−${d.toFixed(1)}` : '✓'}</span>`;
   const total = (f) => rows.reduce((t, r) => t + f(r), 0).toFixed(1);
+  const names = ([first, ...rest]) =>
+    (first ?? '') + (rest.length ? ` +${rest.length} other${rest.length > 1 ? 's' : ''}` : '');
 
   $('summary').innerHTML = `
     <h2>How you did</h2>
@@ -158,7 +160,7 @@ function renderSummary() {
       <tr><th>Nominated</th><th>Brain <span class="muted">its best · optimal</span></th><th>Hand <span class="muted">placed · its best</span></th></tr>
       ${rows.map((r) => `<tr>
         <td>${r.country}</td>
-        <td>${fmt(r.nominated)} · ${fmt(r.optimal.pct)} <span class="muted">${r.optimal.country ?? ''}</span> ${lost(r.nominated - r.optimal.pct)}</td>
+        <td>${fmt(r.nominated)} · ${fmt(r.optimal.pct)} <span class="muted">${names(r.optimal.countries)}</span> ${lost(r.nominated - r.optimal.pct)}</td>
         <td>${fmt(r.placed)} · ${fmt(r.nominated)} ${lost(r.placed - r.nominated)}</td>
       </tr>`).join('')}
       <tr class="total">
