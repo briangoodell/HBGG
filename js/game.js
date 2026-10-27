@@ -109,6 +109,7 @@ function applyAction(s, action, from, board) {
 //   optimal   best score the brain could have nominated, and every
 //             country that ties for it
 //   nominated best the nominated country could score in any open cell
+//   bestCell  where that best score was (null if it fit nowhere)
 //   placed    what the hand actually scored with it
 
 const MISS = 100;
@@ -129,10 +130,11 @@ function review(s, board) {
       countries: [...new Set(options.filter((o) => o.pct === best).map((o) => o.name))],
     };
     const fits = open.filter((i) => board.answers[i].includes(g.country));
-    const nominated = Math.min(MISS, ...fits.map((i) => pct(i, g.country)));
+    const bestCell = fits.reduce((b, i) => (b === null || pct(i, g.country) < pct(b, g.country) ? i : b), null);
+    const nominated = bestCell === null ? MISS : pct(bestCell, g.country);
     const placed = g.correct ? pct(g.cell, g.country) : MISS;
 
     if (g.correct) cells[g.cell] = g.country;
-    return { country: g.country, optimal, nominated, placed };
+    return { country: g.country, optimal, nominated, bestCell, placed };
   });
 }

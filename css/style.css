@@ -110,6 +110,7 @@ button:not(:disabled):hover { border-color: var(--fern); }
 #summary th, #summary td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--rule); }
 #summary th .muted { display: block; font-weight: 400; font-size: 0.75rem; }
 #summary .total td { font-weight: 600; border-bottom: none; }
+#summary .best { display: block; font-size: 0.75rem; color: var(--ink-mute); }
 .lost { font-family: var(--mono); font-size: 0.75rem; color: var(--bad); }
 
 /* ---- Log -------------------------------------------------- */

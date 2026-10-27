@@ -132,10 +132,11 @@ function renderPrompt() {
   }
 }
 
+const cellName = (i) => `${board.rows[Math.floor(i / 3)]} × ${board.cols[i % 3]}`;
+
 function renderLog() {
   $('log').innerHTML = state.guesses.slice().reverse().map((g) => {
-    const where = g.cell === null ? 'discarded'
-      : `${board.rows[Math.floor(g.cell / 3)]} × ${board.cols[g.cell % 3]}`;
+    const where = g.cell === null ? 'discarded' : cellName(g.cell);
     const pct = g.correct ? ` <span class="pct">${pctText(g.country, g.cell)}</span>` : '';
     return `<li class="${g.correct ? 'ok' : 'bad'}">${g.country}${pct} <span class="muted">→ ${where}</span></li>`;
   }).join('');
@@ -157,11 +158,12 @@ function renderSummary() {
     <h2>How you did</h2>
     <p class="muted">Rarity points: lower is better, a miss costs 100. Optimal = best unused country for any open cell at that moment.</p>
     <table>
-      <tr><th>Nominated</th><th>Brain <span class="muted">its best · optimal</span></th><th>Hand <span class="muted">placed · its best</span></th></tr>
+      <tr><th>Nominated</th><th>Brain <span class="muted">its best · optimal</span></th><th>Hand <span class="muted">placed · its best, and where</span></th></tr>
       ${rows.map((r) => `<tr>
         <td>${r.country}</td>
         <td>${fmt(r.nominated)} · ${fmt(r.optimal.pct)} <span class="muted">${names(r.optimal.countries)}</span> ${lost(r.nominated - r.optimal.pct)}</td>
-        <td>${fmt(r.placed)} · ${fmt(r.nominated)} ${lost(r.placed - r.nominated)}</td>
+        <td>${fmt(r.placed)} · ${fmt(r.nominated)} ${lost(r.placed - r.nominated)}
+          <span class="best">${r.bestCell === null ? 'fits nowhere' : cellName(r.bestCell)}</span></td>
       </tr>`).join('')}
       <tr class="total">
         <td>Points lost</td>
